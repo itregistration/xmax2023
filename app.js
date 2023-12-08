@@ -68,3 +68,7 @@ app.post('/upload', (req, res) =>{
     }    
   });
 });
+
+app.get("/match", (req, res) =>{
+  res.sendFile(__dirname + "/match.html");
+});
