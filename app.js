@@ -1,5 +1,9 @@
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 443 });
+var formidable = require('formidable');
+const fs = require('fs');
+
+const readXlsxFile = require('read-excel-file/node')
 
 const clients = new Map();
 
@@ -30,7 +34,7 @@ console.log("wss up");
 const express = require("express");
 const app = express();
 
-app.listen(80, () => {
+app.listen(8080, () => {
   console.log("Application started and Listening on port 80");
 });
 
@@ -38,6 +42,29 @@ app.get("/button", (req, res) => {
   res.sendFile(__dirname + "/button.html");
 });
 
-app.get("/viewer", (req, res) =>{
-  res.sendFile(__dirname + "/viewer.html");
+app.get("/panel", (req, res) =>{
+  res.sendFile(__dirname + "/panel.html");
+});
+
+var uploadedFiles = {};
+app.post('/upload', (req, res) =>{
+  uploadedFiles = {};
+
+  var form = new formidable.IncomingForm();
+  form.on('file', (formname, file) => {
+    let rawData = fs.readFileSync(file.filepath);
+    uploadedFiles[formname] = rawData;
+  })
+
+  form.parse(req, function (err, fields, files) {
+    if(uploadedFiles['file'] != undefined){
+      readXlsxFile(Buffer.from(uploadedFiles['file'])).then((rows) => {
+        res.write(JSON.stringify(rows));
+        res.end();
+      });    
+    }else{
+      res.write(JSON.stringify([]));
+      res.end();
+    }    
+  });
 });

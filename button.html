@@ -20,10 +20,8 @@
 			overflow: hidden;
 		}
 
-		@media (max-resolution: 1dppx) {
-			html, body {
-				position: fixed;
-			}
+		body.mobile {
+			position: fixed;
 		}
 
 		body {
@@ -114,6 +112,8 @@
 			transform: translateY(-2px);
 			background: #9B176D;
 		}
+
+		.d-none{ display: none;}
 	</style>
 
 	<script type="text/javascript">
@@ -124,15 +124,34 @@
 				path += '/' + paths[i];
 			}
 		}
-		var url = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host + ':443' + path + '/ws';
+		var url = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host.split(':')[0] + ':443';
 		console.log(url);
 
-		var ws = new WebSocket(url);
-		ws.onopen = function () { console.log('connected'); };
-		ws.onmessage = function (msg) { console.log(msg); }
+		createWS();
+
+		var ws;
+
+		function createWS(){
+			ws = new WebSocket(url);
+			console.log('connecting');
+			ws.onopen = function () { 
+				console.log('connected');
+				document.getElementById('btn').classList.remove('d-none');
+			};
+			ws.onclose = function(){
+				document.getElementById('btn').classList.add('d-none');
+				createWS();
+			}
+			ws.onmessage = function (msg) { console.log(msg); }
+		}
 	</script>
 
 	<script type="text/javascript">
+
+		if (window.orientation !== undefined) {
+			document.body.classList.add("mobile");
+		}
+
 		function onbtntouchstart(btn) {
 			btn.classList.add('down');
 			btn.childNodes[1].innerHTML = 'Drawing';
@@ -153,7 +172,9 @@
 <div class="topContainer">
 	<!--<button class="button">Click Me</button>-->
 	<div class="btnContainer">
-		<button class="pushable" ontouchstart="javascript:onbtntouchstart(this)" ontouchend="javascript:onbtntouchend(this)">
+		<button id="btn" class="pushable d-none" 
+			onmousedown="javascript:onbtntouchstart(this)" onmouseup="javascript:onbtntouchend(this)"
+			ontouchstart="javascript:onbtntouchstart(this)" ontouchend="javascript:onbtntouchend(this)">
 		  <span class="front">
 			Draw
 		  </span>

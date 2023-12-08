@@ -1,0 +1,247 @@
+<html>
+<head>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+</head>
+<body>
+	<div id="btnMessage"></div>
+
+	<script type="text/javascript">
+		var paths = window.location.pathname.split('/');
+		var path = '';
+		for (var i = 0; i < paths.length; i++) {
+			if (paths[i] != '' && paths[i].indexOf('.html') == -1) {
+				path += '/' + paths[i];
+			}
+		}
+		var url = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host.split(':')[0] + ':443';
+		console.log(url);
+	
+		createWS();
+	
+		var ws;
+	
+		function createWS(){
+			ws = new WebSocket(url);
+			document.getElementById('btnMessage').innerHTML = "connecting"; 
+			ws.onopen = function () { 
+				document.getElementById('btnMessage').innerHTML = "connected"; 
+			};
+			ws.onmessage = function (msg) {
+				document.getElementById('btnMessage').innerHTML = msg.data;
+			}
+			ws.onclose = function(){
+				document.getElementById('btnMessage').innerHTML = "disconnected"; 
+				createWS();
+			}
+		}
+	</script>
+
+	<div style="margin-top: 20px;">
+		<script type="text/javascript">
+			async function uploadFile(){
+				let formData = new FormData();           
+				formData.append("file", excelUpload.files[0]);
+				var response = await fetch('/upload', {
+					method: "POST", 
+					body: formData
+				});    
+				var data = await response.json();
+				processData(data);
+			}
+
+			function processData(rawData){
+				var data = [];
+				for(var i = 1; i < rawData.length; i++){
+					data.push({
+						D: rawData[i][1],
+						N: rawData[i][2],
+						S: rawData[i][3].toLowerCase() == 'male'? 'M':'F',
+						AV: rawData[i][4],
+						V: rawData[i][4],
+					})
+				}
+
+				var mAll = [];
+				var mTop4 = [];
+				var fAll = [];
+				var fTop4 = [];
+
+				mAll = data.filter((x) => x.S == 'M');
+				fAll = data.filter((x) => x.S == 'F');
+
+				if(mAll.length > 4){
+					mAll.sort((a, b)=>{
+						if(a.V < b.V) return 1;
+						if(a.V > b.V) return -1;
+						return 0;
+					});
+					mTop4 = JSON.parse(JSON.stringify(mAll.slice(0, 4)));
+					var mTop4Lowest = mTop4[mTop4.length-1].V;
+					for(var i = 0; i < mTop4.length; i++){
+						mAll[i].V = mTop4Lowest;
+					}
+					shuffle(mAll);
+					shuffle(mTop4);
+				}
+
+				if(fAll.length > 4){
+					fAll.sort((a, b) =>{
+						if(a.V < b.V) return 1;
+						if(a.V > b.V) return -1;
+						return 0;
+					});
+					fTop4 = JSON.parse(JSON.stringify(fAll.slice(0, 4)));
+					var fTop4Lowest = fTop4[fTop4.length-1].V;
+					for(var i = 0; i < fTop4.length; i++){
+						fAll[i].V = fTop4Lowest;
+					}
+					shuffle(fAll);
+					shuffle(fTop4);
+				}
+
+				console.log(mAll);
+				console.log(fAll);
+
+				console.log(mTop4);
+				console.log(fTop4);				
+
+				console.log(mTop4Lowest, fTop4Lowest);
+
+
+				var rs_mAll = document.getElementById('rs_mAll');
+				setElement(rs_mAll, tableCreate(mAll));
+				if(mAll.length > 0){
+					document.getElementById('btnSendMAll').attributes.removeNamedItem('disabled');
+					document.getElementById('btnStartMAll').attributes.removeNamedItem('disabled');
+				} 
+
+				var rs_mTop4 = document.getElementById('rs_mTop4')
+				setElement(rs_mTop4, tableCreate(mTop4));
+				if(mTop4.length > 0){
+					document.getElementById('btnSendMTop4').attributes.removeNamedItem('disabled');
+					document.getElementById('btnStartMTop4').attributes.removeNamedItem('disabled');
+				} 
+
+				var rs_fAll = document.getElementById('rs_fAll');
+				setElement(rs_fAll, tableCreate(fAll));
+				if(fAll.length > 0){
+					document.getElementById('btnSendFAll').attributes.removeNamedItem('disabled');
+					document.getElementById('btnStartFAll').attributes.removeNamedItem('disabled');
+				} 
+
+				var rs_fTop4 = document.getElementById('rs_fTop4');
+				setElement(rs_fTop4, tableCreate(fTop4));
+				if(fTop4.length > 0){
+					document.getElementById('btnSendFTop4').attributes.removeNamedItem('disabled');
+					document.getElementById('btnStartFTop4').attributes.removeNamedItem('disabled');
+				} 
+			}
+
+			const shuffle = (array) => { 
+				for (let i = array.length - 1; i > 0; i--) { 
+					const j = Math.floor(Math.random() * (i + 1)); 
+					[array[i], array[j]] = [array[j], array[i]]; 
+				} 
+				return array; 
+			}; 
+			function setElement(element, data) {
+				element.innerHTML = data; 
+			}
+
+			function tableCreate(array){
+				var tbl = document.createElement('table');
+				tbl.style.width = '100%';
+  				tbl.setAttribute('border', '1');
+
+				var thead = document.createElement('thead');  
+				var tr = document.createElement('tr');
+				var th = document.createElement('th');
+				th.style.width = '20%';
+				th.appendChild(document.createTextNode('Dept'));
+				tr.appendChild(th);
+
+				var th = document.createElement('th');
+				th.style.width = '20%';
+				th.appendChild(document.createTextNode('Name'));
+				tr.appendChild(th);
+
+				var th = document.createElement('th');
+				th.style.width = '20%';
+				th.appendChild(document.createTextNode('Sex'));
+				tr.appendChild(th);
+
+				var th = document.createElement('th');
+				th.style.width = '20%';
+				th.appendChild(document.createTextNode('Actual Vote'));
+				tr.appendChild(th);
+
+				var th = document.createElement('th');
+				th.style.width = '20%';
+				th.appendChild(document.createTextNode('Vote'));
+				tr.appendChild(th);
+				
+				thead.appendChild(tr);
+				tbl.appendChild(thead);
+
+				var tbdy = document.createElement('tbody');
+				for(var i = 0; i < array.length; i++){
+					var tr = document.createElement('tr');
+					for(var k in array[i]){
+						var td = document.createElement('td');
+						td.appendChild(document.createTextNode(array[i][k]));
+						tr.appendChild(td);
+					}
+					tbdy.appendChild(tr);
+				}
+				tbl.appendChild(tbdy);
+				return tbl.outerHTML;
+			}
+		</script>
+		<input type="file" id="excelUpload" name="excelUpload" />
+		<input type="button" value="Submit" onclick="uploadFile()"/>
+	</div>
+
+	<script type="text/javascript">
+		function sendData(part){
+			console.log('send', part);
+		}
+
+		function start(part){
+			console.log('start', part);
+		}
+	</script>
+
+	<div id="excelResult">
+		男初賽
+		<button id="btnSendMAll" onclick="javascript:sendData('mAll');" disabled>Send Data</button>
+		<button id="btnStartMAll" onclick="javascript:start('mAll');" disabled>Start</button>
+		<div id="rs_mAll">
+
+		</div>
+		<br>
+		男決賽
+		<button id="btnSendMTop4" onclick="javascript:sendData('mTop4');" disabled>Send Data</button>
+		<button id="btnStartMTop4" onclick="javascript:start('mTop4');" disabled>Start</button>
+		<div id="rs_mTop4">
+		</div>
+		<br>
+		女初賽
+		<button id="btnSendFAll" onclick="javascript:sendData('fAll');" disabled>Send Data</button>
+		<button id="btnStartFAll" onclick="javascript:start('fAll');" disabled>Start</button>
+		<div id="rs_fAll">
+			
+		</div>
+		<br>
+		女決賽
+		<button id="btnSendFTop4" onclick="javascript:sendData('fTop4');" disabled>Send Data</button>
+		<button id="btnStartFTop4" onclick="javascript:start('fTop4');" disabled>Start</button>
+		<div id="rs_fTop4">
+			
+		</div>
+	</div>
+
+</body>
+</html>
+
