@@ -42,9 +42,10 @@
 		<script type="text/javascript">
 
 			var mAll = [];
-			var mTop4 = [];
+			var mTop2 = [];
 			var fAll = [];
-			var fTop4 = [];
+			var fTop2 = [];
+			var all = [];
 
 			async function uploadFile(){
 				let formData = new FormData();           
@@ -69,44 +70,69 @@
 					})
 				}
 
-				mAll = [];
-				mTop4 = [];
-				fAll = [];
-				fTop4 = [];
-
 				var top = 2;
-
+				
+				mAll = [];
+				fAll = [];
+				mTop2 = [];
+				fTop2 = [];
 				mAll = data.filter((x) => x.S == 'M');
 				fAll = data.filter((x) => x.S == 'F');
 
-				if(mAll.length > top){
-					mAll.sort((a, b)=>{
-						if(a.V < b.V) return 1;
-						if(a.V > b.V) return -1;
-						return 0;
-					});
-					mTop4 = JSON.parse(JSON.stringify(mAll.slice(0, top)));
-					var mTop4Lowest = mTop4[mTop4.length-1].V;
-					for(var i = 0; i < mTop4.length; i++){
-						mAll[i].V = mTop4Lowest;
+
+				mAll.sort((a, b)=>{
+					if(a.V < b.V) return 1;
+					if(a.V > b.V) return -1;
+					return 0;
+				});
+
+				mTop2 = JSON.parse(JSON.stringify(mAll.slice(0, top)));
+				var mTop2Lowest = mTop2[mTop2.length-1].V;
+				for(var i = 0; i < mAll.length; i++){
+					if(i < mTop2.length){
+						mAll[i].V = mTop2Lowest;
 					}
-					shuffle(mAll);
+					mAll[i].P = parseInt((mAll[i].V / mTop2Lowest * 100).toFixed(0));
+				}
+
+
+				fAll.sort((a, b) =>{
+					if(a.V < b.V) return 1;
+					if(a.V > b.V) return -1;
+					return 0;
+				});
+
+				fTop2 = JSON.parse(JSON.stringify(fAll.slice(0, top)));
+				var fTop2Lowest = fTop2[fTop2.length-1].V;
+				for(var i = 0; i < fAll.length; i++){
+					if(i < fTop2.length){
+						fAll[i].V = fTop2Lowest;
+					}
+					fAll[i].P = parseInt((fAll[i].V / fTop2Lowest * 100).toFixed(0));
+				}
+				
+				all = mAll.concat(fAll);
+				shuffle(all);
+
+				setElement(rs_All, tableCreate(all));
+				document.getElementById('btnSendAll').attributes.removeNamedItem('disabled');
+				document.getElementById('btnStartAll').attributes.removeNamedItem('disabled');
+				/*
+				
+
+
+
+				if(mAll.length > top){
+					
+					
+					
+					
 					shuffle(mTop4);
 				}
 
 				if(fAll.length > top){
-					fAll.sort((a, b) =>{
-						if(a.V < b.V) return 1;
-						if(a.V > b.V) return -1;
-						return 0;
-					});
-					fTop4 = JSON.parse(JSON.stringify(fAll.slice(0, top)));
-					var fTop4Lowest = fTop4[fTop4.length-1].V;
-					for(var i = 0; i < fTop4.length; i++){
-						fAll[i].V = fTop4Lowest;
-					}
-					shuffle(fAll);
-					shuffle(fTop4);
+					
+					
 				}
 
 				console.log(mAll);
@@ -120,10 +146,7 @@
 
 				var rs_mAll = document.getElementById('rs_mAll');
 				setElement(rs_mAll, tableCreate(mAll));
-				if(mAll.length > 0){
-					document.getElementById('btnSendMAll').attributes.removeNamedItem('disabled');
-					document.getElementById('btnStartMAll').attributes.removeNamedItem('disabled');
-				} 
+				
 
 				var rs_mTop4 = document.getElementById('rs_mTop4')
 				setElement(rs_mTop4, tableCreate(mTop4));
@@ -145,6 +168,7 @@
 					document.getElementById('btnSendFTop4').attributes.removeNamedItem('disabled');
 					document.getElementById('btnStartFTop4').attributes.removeNamedItem('disabled');
 				} 
+				*/
 			}
 
 			const shuffle = (array) => { 
@@ -163,31 +187,38 @@
 				tbl.style.width = '100%';
   				tbl.setAttribute('border', '1');
 
+				var col = 6;
+
 				var thead = document.createElement('thead');  
 				var tr = document.createElement('tr');
 				var th = document.createElement('th');
-				th.style.width = '20%';
+				th.style.width = (100 / col) + '%';
 				th.appendChild(document.createTextNode('Dept'));
 				tr.appendChild(th);
 
 				var th = document.createElement('th');
-				th.style.width = '20%';
+				th.style.width = (100 / col) + '%';
 				th.appendChild(document.createTextNode('Name'));
 				tr.appendChild(th);
 
 				var th = document.createElement('th');
-				th.style.width = '20%';
+				th.style.width = (100 / col) + '%';
 				th.appendChild(document.createTextNode('Sex'));
 				tr.appendChild(th);
 
 				var th = document.createElement('th');
-				th.style.width = '20%';
+				th.style.width = (100 / col) + '%';
 				th.appendChild(document.createTextNode('Actual Vote'));
 				tr.appendChild(th);
 
 				var th = document.createElement('th');
-				th.style.width = '20%';
+				th.style.width = (100 / col) + '%';
 				th.appendChild(document.createTextNode('Vote'));
+				tr.appendChild(th);
+
+				var th = document.createElement('th');
+				th.style.width = (100 / col) + '%';
+				th.appendChild(document.createTextNode('%'));
 				tr.appendChild(th);
 				
 				thead.appendChild(tr);
@@ -215,6 +246,9 @@
 		function sendData(part){
 			console.log('send', part);
 			switch(part){
+				case 'All':
+					ws.send(JSON.stringify(all));
+					break;
 				case 'mAll':
 					ws.send(JSON.stringify(mAll));
 					break;
@@ -237,31 +271,10 @@
 	</script>
 
 	<div id="excelResult">
-		男初賽
-		<button id="btnSendMAll" onclick="javascript:sendData('mAll');" disabled>Send Data</button>
-		<button id="btnStartMAll" onclick="javascript:start('mAll');" disabled>Start</button>
-		<div id="rs_mAll">
+		<button id="btnSendAll" onclick="javascript:sendData('All');" disabled>Send Data</button>
+		<button id="btnStartAll" onclick="javascript:start('All');" disabled>Start</button>
+		<div id="rs_All">
 
-		</div>
-		<br>
-		男決賽
-		<button id="btnSendMTop4" onclick="javascript:sendData('mTop4');" disabled>Send Data</button>
-		<button id="btnStartMTop4" onclick="javascript:start('mTop4');" disabled>Start</button>
-		<div id="rs_mTop4">
-		</div>
-		<br>
-		女初賽
-		<button id="btnSendFAll" onclick="javascript:sendData('fAll');" disabled>Send Data</button>
-		<button id="btnStartFAll" onclick="javascript:start('fAll');" disabled>Start</button>
-		<div id="rs_fAll">
-			
-		</div>
-		<br>
-		女決賽
-		<button id="btnSendFTop4" onclick="javascript:sendData('fTop4');" disabled>Send Data</button>
-		<button id="btnStartFTop4" onclick="javascript:start('fTop4');" disabled>Start</button>
-		<div id="rs_fTop4">
-			
 		</div>
 	</div>
 
