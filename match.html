@@ -104,8 +104,13 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             border-bottom-right-radius: 1em;
             border-top-right-radius: 0.5em;
             border-bottom-left-radius: 0.5em;
-            color: #DE488F;
+            color: #5CB9E5;
             background: white;
+        }
+
+        .numberbox.F{
+            border-color: #DE488F;
+            color: #DE488F;
         }
 
         .nameboard{
@@ -116,13 +121,11 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             flex-wrap: wrap;
             align-items: center;
             font-size: 1.5em;
-            color: #DE488F;
         }
 
         .nameboxContainer{
             display: flex;
             align-items: center;
-            margin-right: 10px;
             border: 3px solid #5CB9E5;
             border-top-left-radius: 2em;
             border-bottom-right-radius: 2em;
@@ -132,7 +135,16 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             padding-left: 1em;
             padding-right: 1em;
             background: white;
-            flex: 1;
+            width: calc(33% - 2em - 6px);
+        }
+
+        .nameboxContainer.M, .nameboxContainer.M .namenumberbox{
+            color: #5CB9E5;
+            border-color: #5CB9E5;
+        }
+        .nameboxContainer.F, .nameboxContainer.F .namenumberbox{
+            color: #DE488F;
+            border-color: #DE488F;
         }
 
         .namenumberbox{
@@ -143,6 +155,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             border-bottom: 0;
             padding-right: 0.5em;
         }
+
         .namebox{
             padding-left: 0.5em;
             text-align: center;
@@ -255,7 +268,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
     <script> 
         var matchData = [];       
         function prepareMatch(matchData){
-            console.log(JSON.stringify(matchData));
+            //console.log(JSON.stringify(matchData));
             
             var nameContainer = document.getElementById('nameContainer');
             var nameboard = nameContainer.childNodes[1];
@@ -263,6 +276,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             for(var i = 0; i < matchData.length; i++){
                 var div = document.createElement('div');
                 div.classList.add('nameboxContainer');
+                div.classList.add(matchData[i].S);
 
                 var divNo = document.createElement('div');
                 divNo.classList.add('namenumberbox');
@@ -304,7 +318,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 var img = document.createElement('img');
                 img.src = horseImg;
                 var imgHeight = (containerHeight - (6 * (matchData.length + 1))) / matchData.length;
-                console.log(containerHeight, imgHeight);
+                //console.log(containerHeight, imgHeight);
                 img.style.height = imgHeight;
                 
                 div.style.position = 'relative';
@@ -315,6 +329,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 div2.style.display = 'flex';
                 div2.style.alignItems = 'center';
                 div2.classList.add('numberbox');
+                div2.classList.add(matchData[i].S);
                 div2.appendChild(document.createTextNode(i+1));
                 
                 div.appendChild(div2);
@@ -335,6 +350,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
         var timer;
         var totalDuration = 30000;
         function startMatch(data){
+            console.log('start', new Date());
             var track = document.getElementById('trackContainer').childNodes[0].childNodes[0];
             var img = track.childNodes[0];
             var trackWidth = track.clientWidth;
@@ -345,21 +361,18 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 stepsRan.push(0);
             }
 
-            console.log(trackWidth, imgWidth, maxStep);
+            //console.log(trackWidth, imgWidth, maxStep);
 
-            console.log(totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
+            //console.log(totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
 
             var movePath = trackWidth - imgWidth;
             var stepWidth = movePath / maxStep;
-            timer = setInterval(function(){
+
+            var fn = function(){
                 var rnd = Math.floor( Math.random() * data.length);
-                var idx = 1;
-                while(stepsRan[rnd] == data[rnd].P){
-                    rnd = Math.floor( Math.random() * data.length);
-                    i++;
-                    if(stepsRan[rnd] == data[rnd].P && 月i >= data.length){
-                        return;
-                    }
+                if(stepsRan[rnd] == data[rnd].P){
+                    fn();
+                    return;
                 }
                 stepsRan[rnd] += 1;
                 var img = document.getElementById('trackContainer').childNodes[rnd].childNodes[0].childNodes[0];
@@ -380,20 +393,21 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 }
                 
                 if(finished){
+                    console.log('end', new Date());
                     clearInterval(timer);
                     showFinishPopup(matchData);
                 }
-            }, totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
+            };
+            
+            timer = setInterval(fn, totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
         }
         
-        /*
         window.onload = function() {
-            var data = [{"D":"Dept1","N":"User2","S":"F","AV":15,"V":15,"P":25},{"D":"Dept1","N":"User4","S":"M","AV":78,"V":78,"P":80},{"D":"Dept2","N":"User11","S":"M","AV":32,"V":32,"P":33},{"D":"Dept2","N":"User6","S":"F","AV":132,"V":60,"P":100},{"D":"Dept2","N":"User9","S":"F","AV":60,"V":60,"P":100},{"D":"Dept1","N":"User3","S":"M","AV":26,"V":26,"P":27},{"D":"Dept3","N":"User15","S":"M","AV":54,"V":54,"P":55},{"D":"Dept2","N":"User7","S":"M","AV":98,"V":98,"P":100},{"D":"Dept2","N":"User8","S":"M","AV":95,"V":95,"P":97},{"D":"Dept3","N":"User12","S":"M","AV":2,"V":2,"P":2},{"D":"Dept2","N":"User10","S":"M","AV":75,"V":75,"P":77},{"D":"Dept1","N":"User1","S":"M","AV":10,"V":10,"P":10},{"D":"Dept3","N":"User13","S":"M","AV":5,"V":5,"P":5},{"D":"Dept1","N":"User5","S":"M","AV":159,"V":98,"P":100},{"D":"Dept3","N":"User14","S":"M","AV":46,"V":46,"P":47}];
+            var data = [{"D":"Dept2","N":"User6","S":"F","AV":132,"V":75,"P":100},{"D":"Dept1","N":"User3","S":"M","AV":26,"V":26,"P":27},{"D":"Dept2","N":"User7","S":"M","AV":98,"V":98,"P":100},{"D":"Dept2","N":"User11","S":"F","AV":32,"V":32,"P":43},{"D":"Dept2","N":"User10","S":"F","AV":75,"V":75,"P":100},{"D":"Dept1","N":"User4","S":"M","AV":78,"V":78,"P":80},{"D":"Dept3","N":"User12","S":"F","AV":2,"V":2,"P":3},{"D":"Dept1","N":"User5","S":"M","AV":159,"V":98,"P":100},{"D":"Dept1","N":"User2","S":"F","AV":15,"V":15,"P":20},{"D":"Dept2","N":"User9","S":"F","AV":60,"V":60,"P":80},{"D":"Dept2","N":"User8","S":"M","AV":95,"V":95,"P":97},{"D":"Dept1","N":"User1","S":"M","AV":10,"V":10,"P":10}];
             matchData = data;
             prepareMatch(data);
             startMatch(data);
         };
-        */
         
 
         function showFinishPopup(matchData){
