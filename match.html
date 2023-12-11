@@ -290,6 +290,9 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             var trackOffsetHeight = 0;
             
             for(var i = 0; i < matchData.length; i++){
+                var trackWrapper = document.createElement('div');
+                trackWrapper.classList.add('trackWrapper');
+
                 var track = document.createElement('div');
                 trackContainer.appendChild(track);
                 track.classList.add('track');
@@ -317,7 +320,14 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 div.appendChild(div2);
                 div.appendChild(img);
 
-                track.appendChild(div);
+                trackWrapper.appendChild(div);
+
+                var trackName = document.createElement('div');
+                trackName.classList.add('trackName');
+                trackName.innerHTML = 'A';
+                //trackWrapper.appendChild(trackName);
+
+                track.appendChild(trackWrapper);
             }
         }
 
@@ -325,7 +335,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
         var timer;
         var totalDuration = 1000; //30000;
         function startMatch(data){
-            var track = document.getElementById('trackContainer').childNodes[0];
+            var track = document.getElementById('trackContainer').childNodes[0].childNodes[0];
             var img = track.childNodes[0];
             var trackWidth = track.clientWidth;
             var imgWidth = img.clientWidth;
@@ -343,13 +353,18 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             var stepWidth = movePath / maxStep;
             timer = setInterval(function(){
                 var rnd = Math.floor( Math.random() * data.length);
+                var idx = 1;
                 while(stepsRan[rnd] == data[rnd].P){
                     rnd = Math.floor( Math.random() * data.length);
+                    i++;
+                    if(i >= data.length) break;
                 }
                 stepsRan[rnd] += 1;
-                var img = document.getElementById('trackContainer').childNodes[rnd].childNodes[0];
+                var img = document.getElementById('trackContainer').childNodes[rnd].childNodes[0].childNodes[0];
+                var trackWidth = track.clientWidth;
+                var movePath = trackWidth - imgWidth;
 
-                img.style.left = (stepWidth * stepsRan[rnd]) + 'px';
+                img.style.left = (stepsRan[rnd] / 100 * movePath) + 'px';
 
                 var finished = stepsRan.filter(x => x == maxStep).length == data.filter(x => x.P == maxStep).length;
                 
@@ -369,15 +384,14 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             }, totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
         }
         
-        /*
+        
         window.onload = function() {
             var data = [{"D":"Dept1","N":"User2","S":"F","AV":15,"V":15,"P":25},{"D":"Dept1","N":"User4","S":"M","AV":78,"V":78,"P":80},{"D":"Dept2","N":"User11","S":"M","AV":32,"V":32,"P":33},{"D":"Dept2","N":"User6","S":"F","AV":132,"V":60,"P":100},{"D":"Dept2","N":"User9","S":"F","AV":60,"V":60,"P":100},{"D":"Dept1","N":"User3","S":"M","AV":26,"V":26,"P":27},{"D":"Dept3","N":"User15","S":"M","AV":54,"V":54,"P":55},{"D":"Dept2","N":"User7","S":"M","AV":98,"V":98,"P":100},{"D":"Dept2","N":"User8","S":"M","AV":95,"V":95,"P":97},{"D":"Dept3","N":"User12","S":"M","AV":2,"V":2,"P":2},{"D":"Dept2","N":"User10","S":"M","AV":75,"V":75,"P":77},{"D":"Dept1","N":"User1","S":"M","AV":10,"V":10,"P":10},{"D":"Dept3","N":"User13","S":"M","AV":5,"V":5,"P":5},{"D":"Dept1","N":"User5","S":"M","AV":159,"V":98,"P":100},{"D":"Dept3","N":"User14","S":"M","AV":46,"V":46,"P":47}];
             matchData = data;
             prepareMatch(data);
             startMatch(data);
-            //showFinishPopup(matchData);
         };
-        */
+        
         
 
         function showFinishPopup(matchData){
