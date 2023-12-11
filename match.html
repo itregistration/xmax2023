@@ -258,6 +258,9 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             border: 0;
             padding-top: 150px;
         }
+        body.horse .track{
+            position: relative;
+        }
     </style>
 </head>
 <body class="unselectable">
@@ -347,7 +350,9 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             var offsetHeight2 = parseInt(window.getComputedStyle(trackContainer).paddingBottom.replace('px', ''));
             var trackOffsetHeight = 0;
             var isHorse = document.body.classList.contains('horse');
-
+            if(isHorse) {
+                trackOffsetHeight = 20;
+            }
             for(var i = 0; i < matchData.length; i++){
                 var trackWrapper = document.createElement('div');
                 trackWrapper.classList.add('trackWrapper');
@@ -358,7 +363,6 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 var trackHeight;
                 if(isHorse){
                     trackHeight = (((containerHeight - offsetHeight - offsetHeight2) / matchData.length) + trackOffsetHeight) + 'px';
-                    trackOffsetHeight = 20;
                 }else{
                     trackHeight = (((containerHeight - offsetHeight - offsetHeight2) / matchData.length) + trackOffsetHeight) + 'px';
                 }
