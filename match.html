@@ -165,12 +165,11 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
 
         .finishContainer{
             width: 80%;
-            height: 80%;
             position: absolute;
             margin: auto;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -80%);
             border: 5px solid white;
             border-radius: 3em;
             z-index: 10000;
@@ -186,14 +185,20 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
 
         .finishContainer .wrapper .header{
             flex: 0 1 auto;
-            padding: 0.5em 1em;
+            padding: 0em 1em;
             text-align: center;
             font-size: 10vh;
             color: #DE488F;
+            line-height: 1em;
+            position: relative;
+            top: 5px;
         }
 
         .finishContainer .wrapper .header sub{
             font-size: 5vh;
+            line-height: 1em;
+            position: relative;
+            top: -5px;
         }
 
         .finishContainer .wrapper .body{
@@ -201,12 +206,12 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             background-size: cover;
             border-bottom-right-radius: 3em;
             border-bottom-left-radius: 3em;
+            padding-bottom: 10px;
         }
 
         .finishContainer table{
             width: 100%;
             text-align: center;
-            height:100%;
             padding-top: 3px;
         }
 
@@ -451,15 +456,15 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             timer = setInterval(fn, totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
         }
         
-        /*
+        
         window.onload = function() {
             var data = [{"D":"Dept2","N":"User6","S":"F","AV":132,"V":75,"P":100},{"D":"Dept1","N":"User3","S":"M","AV":26,"V":26,"P":27},{"D":"Dept2","N":"User7","S":"M","AV":98,"V":98,"P":100},{"D":"Dept2","N":"User11","S":"F","AV":32,"V":32,"P":43},{"D":"Dept2","N":"User10","S":"F","AV":75,"V":75,"P":100},{"D":"Dept1","N":"User4","S":"M","AV":78,"V":78,"P":80},{"D":"Dept3","N":"User12","S":"F","AV":2,"V":2,"P":3},{"D":"Dept1","N":"User5","S":"M","AV":159,"V":98,"P":100},{"D":"Dept1","N":"User2","S":"F","AV":15,"V":15,"P":20},{"D":"Dept2","N":"User9","S":"F","AV":60,"V":60,"P":80},{"D":"Dept2","N":"User8","S":"M","AV":95,"V":95,"P":97},{"D":"Dept1","N":"User1","S":"M","AV":10,"V":10,"P":10}];
             matchData = data;
-            prepareMatch(data);
+            //prepareMatch(data);
             //startMatch(data);
-            //showFinishPopup(data);
+            showFinishPopup(data);
         };
-        */
+        
         
 
         function showFinishPopup(matchData){
