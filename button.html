@@ -140,7 +140,7 @@
 				ws.send(JSON.stringify({
                     ts: new Date(),
                     msg: "buttonConnected",
-                })
+                }));
 			};
 			ws.onclose = function(){
 				document.getElementById('btn').classList.add('d-none');

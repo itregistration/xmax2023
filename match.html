@@ -251,7 +251,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 ws.send(JSON.stringify({
                     ts: new Date(),
                     msg: "matchConnected",
-                })
+                }));
 			};
 			ws.onmessage = function (msg) {
                 var jData = JSON.parse(msg.data);
