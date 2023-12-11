@@ -156,18 +156,45 @@
 			document.body.classList.add("mobile");
 		}
 
-		function onbtntouchstart(btn) {
-			btn.classList.add('down');
-			btn.childNodes[1].innerHTML = 'Drawing';
-			ws.send(JSON.stringify({
-				ts: new Date(),
-				msg: 'Pressed',
-			}));
-		}
+		window.onload = function(){
+			var btn = document.getElementById('btn');
+			btn.addEventListener('mousedown', function(e){
+				e.stopPropagation();
+				e.preventDefault();
 
-		function onbtntouchend(btn) {
-			btn.classList.remove('down');
-			btn.childNodes[1].innerHTML = 'Draw';
+				var btn = document.getElementById('btn');
+				btn.classList.add('down');
+				btn.childNodes[1].innerHTML = 'Drawing';
+				ws.send(JSON.stringify({
+					ts: new Date(),
+					msg: 'Pressed',
+				}));
+			});
+
+			btn.addEventListener('mouseup', function(e){
+				var btn = document.getElementById('btn');
+				btn.classList.remove('down');
+				btn.childNodes[1].innerHTML = 'Draw';
+			});
+
+			btn.addEventListener('touchstart', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+
+				var btn = document.getElementById('btn');
+				btn.classList.add('down');
+				btn.childNodes[1].innerHTML = 'Drawing';
+				ws.send(JSON.stringify({
+					ts: new Date(),
+					msg: 'Pressed',
+				}));
+			});
+
+			btn.addEventListener('touchend', function(e){
+				var btn = document.getElementById('btn');
+				btn.classList.remove('down');
+				btn.childNodes[1].innerHTML = 'Draw';
+			});
 		}
 	</script>
 </head>
@@ -176,9 +203,7 @@
 <div class="topContainer">
 	<!--<button class="button">Click Me</button>-->
 	<div class="btnContainer">
-		<button id="btn" class="pushable d-none" 
-			onmousedown="javascript:onbtntouchstart(this)" onmouseup="javascript:onbtntouchend(this)"
-			ontouchstart="javascript:onbtntouchstart(this)" ontouchend="javascript:onbtntouchend(this)">
+		<button id="btn" class="pushable d-none">
 		  <span class="front">
 			Draw
 		  </span>
