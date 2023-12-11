@@ -353,8 +353,14 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             var stepWidth = movePath / maxStep;
             timer = setInterval(function(){
                 var rnd = Math.floor( Math.random() * data.length);
-                if(stepsRan[rnd] == data[rnd].P) return;
-                
+                var idx = 1;
+                while(stepsRan[rnd] == data[rnd].P){
+                    rnd = Math.floor( Math.random() * data.length);
+                    i++;
+                    if(i >= data.length){
+                        return;
+                    }
+                }
                 stepsRan[rnd] += 1;
                 var img = document.getElementById('trackContainer').childNodes[rnd].childNodes[0].childNodes[0];
                 var trackWidth = track.clientWidth;
