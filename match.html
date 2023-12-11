@@ -256,7 +256,9 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                     matchData = jData;
                     prepareMatch(jData);
                 }else{
-                    startMatch(matchData);
+                    if(jData.msg == 'startMatch'){
+                        startMatch(matchData);
+                    }
                 }
 			}
 			ws.onclose = function(){
@@ -351,6 +353,10 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
         var totalDuration = 30000;
         function startMatch(data){
             console.log('start', new Date());
+            var container = document.getElementById('finishContainer');
+            container.classList.add('d-none');
+            clearInterval(timer);
+
             var track = document.getElementById('trackContainer').childNodes[0].childNodes[0];
             var img = track.childNodes[0];
             var trackWidth = track.clientWidth;
@@ -359,6 +365,8 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             stepsRan = [];
             for(var i = 0; i < data.length; i++){
                 stepsRan.push(0);
+                var img = document.getElementById('trackContainer').childNodes[i].childNodes[0].childNodes[0];
+                img.style.left = '0px';
             }
 
             //console.log(trackWidth, imgWidth, maxStep);
@@ -415,6 +423,11 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             container.classList.remove('d-none');
             var winners = matchData.filter(x => x.P == 100);
             console.log(winners);
+
+            document.getElementById('m1').innerHTML = '';
+            document.getElementById('m2').innerHTML = '';
+            document.getElementById('f1').innerHTML = '';
+            document.getElementById('f2').innerHTML = '';
 
             document.getElementById('m1').appendChild(createWinner(winners.filter(x => x.S == 'M')[0]));
             document.getElementById('m2').appendChild(createWinner(winners.filter(x => x.S == 'M')[1]));
