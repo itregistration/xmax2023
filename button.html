@@ -137,6 +137,10 @@
 			ws.onopen = function () { 
 				console.log('connected');
 				document.getElementById('btn').classList.remove('d-none');
+				ws.send(JSON.stringify({
+                    ts: new Date(),
+                    msg: "buttonConnected",
+                })
 			};
 			ws.onclose = function(){
 				document.getElementById('btn').classList.add('d-none');
