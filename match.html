@@ -357,7 +357,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 while(stepsRan[rnd] == data[rnd].P){
                     rnd = Math.floor( Math.random() * data.length);
                     i++;
-                    if(i >= data.length){
+                    if(stepsRan[rnd] == data[rnd].P && 月i >= data.length){
                         return;
                     }
                 }
