@@ -120,7 +120,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            font-size: 1.5em;
+            font-size: 2.8vh;
         }
 
         .nameboxContainer{
@@ -162,7 +162,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             width:100%;
         }
         .namebox sub{
-            font-size: 0.7em;
+            font-size: 1.8vh;
         }
 
         .finishContainer{
@@ -190,12 +190,12 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             flex: 0 1 auto;
             padding: 0.5em 1em;
             text-align: center;
-            font-size: 2.5em;
+            font-size: 10vh;
             color: #DE488F;
         }
 
         .finishContainer .wrapper .header sub{
-            font-size: 0.5em;
+            font-size: 5vh;
         }
 
         .finishContainer .wrapper .body{
@@ -209,7 +209,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             width: 100%;
             text-align: center;
             height:100%;
-            padding-top: 20%;
+            padding-top: 10vh;
         }
 
         .d-none{
@@ -217,13 +217,22 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
         }
         
         .winnerName{
-            font-size: 3em;
+            font-size: 8vh;
             color: #DE488F;
         }
 
         .winnerDept{
-            font-size: 2em;
+            font-size: 4vh;
             color: #5CB9E5;
+        }
+
+        .modalFinish{
+            background: black;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+            position: absolute;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -275,6 +284,11 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
         var matchData = [];       
         function prepareMatch(matchData){
             //console.log(JSON.stringify(matchData));
+
+            var modal = document.getElementById('modalFinish');
+            modal.classList.add('d-none');
+            var container = document.getElementById('finishContainer');
+            container.classList.add('d-none');
             
             var nameContainer = document.getElementById('nameContainer');
             var nameboard = nameContainer.childNodes[1];
@@ -354,9 +368,11 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
 
         var stepsRan = [];
         var timer;
-        var totalDuration = 30000;
+        var totalDuration = 1000;
         function startMatch(data){
             console.log('start', new Date());
+            var modal = document.getElementById('modalFinish');
+            modal.classList.add('d-none');
             var container = document.getElementById('finishContainer');
             container.classList.add('d-none');
             clearInterval(timer);
@@ -413,16 +429,21 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             
             timer = setInterval(fn, totalDuration / data.map(x => x.V).reduce((a, b) => a+b, 0));
         }
+        
         /*
         window.onload = function() {
             var data = [{"D":"Dept2","N":"User6","S":"F","AV":132,"V":75,"P":100},{"D":"Dept1","N":"User3","S":"M","AV":26,"V":26,"P":27},{"D":"Dept2","N":"User7","S":"M","AV":98,"V":98,"P":100},{"D":"Dept2","N":"User11","S":"F","AV":32,"V":32,"P":43},{"D":"Dept2","N":"User10","S":"F","AV":75,"V":75,"P":100},{"D":"Dept1","N":"User4","S":"M","AV":78,"V":78,"P":80},{"D":"Dept3","N":"User12","S":"F","AV":2,"V":2,"P":3},{"D":"Dept1","N":"User5","S":"M","AV":159,"V":98,"P":100},{"D":"Dept1","N":"User2","S":"F","AV":15,"V":15,"P":20},{"D":"Dept2","N":"User9","S":"F","AV":60,"V":60,"P":80},{"D":"Dept2","N":"User8","S":"M","AV":95,"V":95,"P":97},{"D":"Dept1","N":"User1","S":"M","AV":10,"V":10,"P":10}];
             matchData = data;
             prepareMatch(data);
             startMatch(data);
+            //showFinishPopup(data);
         };
         */
+        
 
         function showFinishPopup(matchData){
+            var modal = document.getElementById('modalFinish');
+            modal.classList.remove('d-none');
             var container = document.getElementById('finishContainer');
             container.classList.remove('d-none');
             var winners = matchData.filter(x => x.P == 100);
@@ -467,6 +488,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
             <div class="nameboard">
                 
             </div>            
+            <div id="modalFinish" class="modalFinish d-none"></div>
             <div id="finishContainer" class="finishContainer d-none">
                 <div class="wrapper">
                     <div class="header">
