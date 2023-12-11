@@ -156,45 +156,36 @@
 			document.body.classList.add("mobile");
 		}
 
-		window.onload = function(){
-			var btn = document.getElementById('btn');
-			btn.addEventListener('mousedown', function(e){
-				e.stopPropagation();
-				e.preventDefault();
+		function onbtntouchstart(btn) {
+			btn.classList.add('down');
+			btn.childNodes[1].innerHTML = 'Drawing';
+			ws.send(JSON.stringify({
+				ts: new Date(),
+				msg: 'Pressed',
+			}));
+		}
 
-				var btn = document.getElementById('btn');
-				btn.classList.add('down');
-				btn.childNodes[1].innerHTML = 'Drawing';
-				ws.send(JSON.stringify({
-					ts: new Date(),
-					msg: 'Pressed',
-				}));
-			});
+		function onbtntouchend(btn) {
+			btn.classList.remove('down');
+			btn.childNodes[1].innerHTML = 'Draw';
+		}
 
-			btn.addEventListener('mouseup', function(e){
-				var btn = document.getElementById('btn');
-				btn.classList.remove('down');
-				btn.childNodes[1].innerHTML = 'Draw';
-			});
+		function onbtnmousedown(btn) {
+			/*
+			btn.classList.add('down');
+			btn.childNodes[1].innerHTML = 'Drawing';
+			ws.send(JSON.stringify({
+				ts: new Date(),
+				msg: 'Pressed',
+			}));
+			*/
+		}
 
-			btn.addEventListener('touchstart', function(e){
-				e.stopPropagation();
-				e.preventDefault();
-
-				var btn = document.getElementById('btn');
-				btn.classList.add('down');
-				btn.childNodes[1].innerHTML = 'Drawing';
-				ws.send(JSON.stringify({
-					ts: new Date(),
-					msg: 'Pressed',
-				}));
-			});
-
-			btn.addEventListener('touchend', function(e){
-				var btn = document.getElementById('btn');
-				btn.classList.remove('down');
-				btn.childNodes[1].innerHTML = 'Draw';
-			});
+		function onbtnmouseup(btn) {
+			/*
+			btn.classList.remove('down');
+			btn.childNodes[1].innerHTML = 'Draw';
+			*/
 		}
 	</script>
 </head>
@@ -203,7 +194,9 @@
 <div class="topContainer">
 	<!--<button class="button">Click Me</button>-->
 	<div class="btnContainer">
-		<button id="btn" class="pushable d-none">
+		<button id="btn" class="pushable d-none" 
+			onmousedown="javascript:onbtnmousedown(this)" onmouseup="javascript:onbtnmouseup(this)"
+			ontouchstart="javascript:onbtntouchstart(this)" ontouchend="javascript:onbtntouchend(this)">
 		  <span class="front">
 			Draw
 		  </span>
