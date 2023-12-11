@@ -368,7 +368,7 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
 
         var stepsRan = [];
         var timer;
-        var totalDuration = 1000;
+        var totalDuration = 30000;
         function startMatch(data){
             console.log('start', new Date());
             var modal = document.getElementById('modalFinish');
@@ -423,7 +423,9 @@ background-image: url('data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/4QBSRXh
                 if(finished){
                     console.log('end', new Date());
                     clearInterval(timer);
-                    showFinishPopup(matchData);
+                    setTimeout(function(){
+                        showFinishPopup(matchData);
+                    }, 1000);
                 }
             };
             
