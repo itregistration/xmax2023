@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 443 });
+const wss = new WebSocket.Server({ port: 8443 });
 var formidable = require('formidable');
 const fs = require('fs');
 
@@ -35,7 +35,7 @@ const express = require("express");
 const app = express();
 
 app.listen(8080, () => {
-  console.log("Application started and Listening on port 80");
+  console.log("Application started and Listening on port 8080");
 });
 
 app.get("/button", (req, res) => {

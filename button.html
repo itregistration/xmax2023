@@ -21,7 +21,7 @@
 		}
 
 		body.mobile {
-			position: fixed;
+			/*position: fixed;*/
 		}
 
 		body {
@@ -74,7 +74,7 @@
 		}
 
 		.btnContainer {
-			margin-top: 55vh;
+			margin-top: 70vh;
 			margin-bottom: auto;
 		}
 	</style>
@@ -124,7 +124,7 @@
 				path += '/' + paths[i];
 			}
 		}
-		var url = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host.split(':')[0] + ':443';
+		var url = (window.location.protocol == 'https:' ? 'wss://' : 'ws://') + window.location.host.split(':')[0] + ':443/ws';
 		console.log(url);
 
 		createWS();
